@@ -35,7 +35,7 @@ def get_authorListCounts(searchString):
 
     # Getting the full list of unique citing authors with counts
     ## Flatten list of lists for each source PMID
-    full_authorList = [author.encode('utf-8') for article in df["citing_authorList"].tolist() for authorList in article for author in authorList]
+    full_authorList = [author for article in df["citing_authorList"].tolist() for authorList in article for author in authorList]
 
 
     ## Get counts
