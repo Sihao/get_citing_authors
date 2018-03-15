@@ -15,9 +15,9 @@
     <form  action="{{ url_for('return_authorList') }}" method="post">
         <div class="form-group">
             <div class="form-group row">
-                <label for="example-search-input" class="col-6 col-form-label">Search</label>
+                <label for="example-search-input" class="col-6 col-form-label">Enter PubMed search string</label>
                 <div class="col-10">
-                    <input class="form-control" type="search" value="Enter PubMed search string" name="searchString">
+                    <input class="form-control" type="search" value="" name="searchString">
 
                     <button type="submit" class="btn btn-primary" style="margin-top: 20px">Download list</button>
 
