@@ -9,3 +9,12 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+body {
+
+}
+
+form {
+  text-align: center;
+  margin: 100px;
+}
