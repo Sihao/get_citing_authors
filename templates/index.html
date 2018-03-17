@@ -1,32 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>fetchCitation</title>
-    <link rel="stylesheet" type="text/css" href=" {{ url_for('static', filename = 'bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href=" {{ url_for('static', filename = 'style.css') }}">
-
-    <script src="{{ url_for('static', filename = 'bootstrap.min.js') }}"></script>
-
-</head>
-<body>
+{% extends 'main.html' %}
+{% block title %}fetchCitation{% endblock %}
+{% block content %}
 
 <div class="container">
-    <form  action="{{ url_for('return_authorList') }}" method="post">
-        <div class="form-group">
-            <div class="form-group row">
-                <label for="example-search-input" class="col-6 col-form-label">Enter PubMed search string</label>
-                <div class="col-10">
-                    <input class="form-control" type="search" value="" name="searchString">
 
-                    <button type="submit" class="btn btn-primary" style="margin-top: 20px">Download list</button>
+        <div class="col-md-8">
+            <form action="{{ url_for('return_authorListCountsSearch') }}" method="post">
+                <div class="form-group">
+                    <div class="form-group row">
+                        <label class="col-6 col-form-label">Enter PubMed search
+                            string</label>
+                        <div class="col-10">
+                            <input class="form-control" type="search" value="" name="searchString" required="true">
+
+                            <button type="submit" class="btn btn-primary" style="margin-top: 20px">Download list
+                            </button>
+
+                        </div>
+                    </div>
 
                 </div>
-            </div>
+            </form>
 
+            <form action="{{ url_for('return_authorListCountsPMIDs') }}" method="post">
+                <div class="form-group">
+                    <div class="form-group row">
+                        <label class="col-6 col-form-label">Enter list of PMIDs</label>
+                        <div class="col-10">
+                            <input class="form-control" type="search" value="" name="inputPMIDList" required="true">
+
+                            <button type="submit" class="btn btn-primary" style="margin-top: 20px">Download list
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </form>
         </div>
-    </form>
+
 </div>
 
-</body>
-</html>
+{% endblock %}

@@ -11,14 +11,32 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/', methods = ['POST'])
-def return_authorList():
+@app.route('/authorListCountsSearch', methods = ['POST'])
+def return_authorListCountsSearch():
+
     searchString = request.form['searchString']
     si = StringIO()
 
     writer = csv.writer(si, delimiter=',')
 
-    writer.writerows(get_authorListCounts(searchString).items())
+    writer.writerows(get_authorListCountsSearch(searchString).items())
+
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-type"] = "text/csv"
+
+    return output
+
+
+@app.route('/authorListCountsPMIDs', methods = ['POST'])
+def return_authorListCountsPMIDs():
+    inputPMIDList = request.form['inputPMIDList']
+
+    si = StringIO()
+
+    writer = csv.writer(si, delimiter=',')
+
+    writer.writerows(get_authorListCountsList({inputPMIDList}).items())
 
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = "attachment; filename=export.csv"

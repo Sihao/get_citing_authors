@@ -4,10 +4,19 @@ import xml.etree.cElementTree as ET
 import pandas as pd
 from itertools import chain
 
-def get_authorListCounts(searchString):
-    # Get source PMIDs with search term
+def get_authorListCountsSearch(searchString):
 
+    # Get source PMIDs with search term
     sourcePMIDs = searchDB(searchString)
+
+    return get_authorListCounts(sourcePMIDs)
+
+def get_authorListCountsList(inputPMIDList):
+
+    return get_authorListCounts(inputPMIDList)
+
+
+def get_authorListCounts(sourcePMIDs):
 
     # Get list of articles that sort each PMID from source list
     citedByList = getCitedByPMIDs(sourcePMIDs)
@@ -43,9 +52,6 @@ def get_authorListCounts(searchString):
     authorListCounts = dict(Counter(full_authorList))
 
     return authorListCounts
-
-
-
 
 
 def getCitedByPMIDs(inputPMIDList):
