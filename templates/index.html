@@ -4,15 +4,15 @@
 
 <div class="container">
 
-        <!-- Form for return_authorListCountsSearch() -->
+        <!-- Form for return_author_list_counts_search() -->
         <div class="col-md-8">
-            <form action="{{ url_for('return_authorListCountsSearch') }}" method="post">
+            <form action="{{ url_for('return_author_list_counts_search') }}" method="post">
                 <div class="form-group">
                     <div class="form-group row">
                         <label class="col-6 col-form-label">Enter PubMed search
                             string</label>
                         <div class="col-10">
-                            <input class="form-control" type="search" value="" name="searchString" required="true">
+                            <input class="form-control" type="search" value="" name="search_string" required="true">
 
                             <button type="submit" class="btn btn-primary" style="margin-top: 20px">Download list
                             </button>
@@ -29,7 +29,7 @@
                     <div class="form-group row">
                         <label class="col-6 col-form-label">Enter list of PMIDs</label>
                         <div class="col-10">
-                            <input class="form-control" type="search" value="" name="inputPMIDList" required="true">
+                            <input class="form-control" type="search" value="" name="input_PMID_List" required="true">
 
                             <button type="submit" class="btn btn-primary" style="margin-top: 20px">Download list
                             </button>
