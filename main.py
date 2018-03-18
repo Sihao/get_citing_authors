@@ -19,22 +19,22 @@ def index():
 def return_author_list_counts_search():
     """Present user with download for get_author_list_counts_search() output
 
-    Input from form field 'searchString' is passed to get_author_list_counts_search()
+    Input from form field 'search_string' is passed to get_author_list_counts_search()
     whose output is written to a csv file which is made available for download.
 
 
     :return: csv file containing rows of authors together with number of times they have cited papers returned by search
     """
 
-    # Get searchString from form field
-    searchString = request.form['search_string']
+    # Get search_string from form field
+    search_string = request.form['search_string']
 
     # Create IO object to write file to
     si = StringIO()
 
     # Write csv file
     writer = csv.writer(si, delimiter=',')
-    writer.writerows(get_author_list_counts_search(searchString).items())
+    writer.writerows(get_author_list_counts_search(search_string).items())
 
     # Construct file output
     output = make_response(si.getvalue())
@@ -58,14 +58,14 @@ def return_authorListCounts():
 
 
     # Get list of input PMIDs from form field
-    inputPMIDList = request.form['input_PMID_List']
+    input_PMID_list = request.form['input_PMID_List']
 
     # Create IO object to write file to
     si = StringIO()
 
     # Write csv file
     writer = csv.writer(si, delimiter=',')
-    writer.writerows(get_author_list_counts({inputPMIDList}).items())
+    writer.writerows(get_author_list_counts({input_PMID_list}).items())
 
     # Construct file output
     output = make_response(si.getvalue())
