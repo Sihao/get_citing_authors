@@ -4,51 +4,51 @@ import xml.etree.cElementTree as ET
 import pandas as pd
 from itertools import chain
 
-def get_authorListCountsSearch(searchString):
+def get_author_list_counts_search(search_string):
     """Returns a list of authors that have cited papers from search result
 
 
-    :param searchString: PubMed search string to use for the database search
+    :param search_string: PubMed search string to use for the database search
     :return: dict containing author names as keys and number of occurrences as values
     """
 
     # Get source PMIDs (PubMed ID) with search term
-    sourcePMIDs = searchDB(searchString)
+    source_PMIDs = search_DB(search_string)
 
-    return get_authorListCounts(sourcePMIDs)
+    return get_author_list_counts(source_PMIDs)
 
 
 
-def get_authorListCounts(sourcePMIDs):
+def get_author_list_counts(source_PMIDs):
     """Returns a list of authors that have cited papers from list of PMIDs
 
     Constructs a pandas DataFrame using data returned by PubMed API
 
     TODO: output df
 
-    :param sourcePMIDs: Comma separated string of PMIDs or list of PMIDs
+    :param source_PMIDs: Comma separated string of PMIDs or list of PMIDs
     :return: dict containing author names as keys and number of occurrences as values
     """
 
     # Get list of articles that sort each PMID from source list
-    citedByList = getCitedByPMIDs(sourcePMIDs)
+    cited_by_list = get_cited_by_PMIDs(source_PMIDs)
 
     # Get cite counts per PMID for grouping authors later
-    citationsPerPMID = [len(PMID) for PMID in citedByList]
+    citations_per_PMID = [len(PMID) for PMID in cited_by_list]
 
     # Flatten list
-    flat_citedByList = list(chain.from_iterable(citedByList))
+    flat_cited_by_list = list(chain.from_iterable(cited_by_list))
 
 
     # Get metadata for each of the articles that cite the source articles (authors and titles)
-    citing_authorListPerPMID, _ = getPMIDsMetaData(flat_citedByList) # Contains citing author list for all source PMIDs
+    citing_author_list_per_PMID, _ = getPMIDsMetaData(flat_cited_by_list) # Contains citing author list for all source PMIDs
 
     # Group author list per source PMID
-    citing_authorListPerPMIDGrouped = groupListElements(citing_authorListPerPMID, citationsPerPMID)
+    citing_author_list_per_PMID_grouped = group_list_elements(citing_author_list_per_PMID, citations_per_PMID)
 
 
     # Construct DataFrame using extracted data
-    df = pd.DataFrame(data = {'PMID': sourcePMIDs, 'citing_PMIDs':citedByList, 'citing_authorList':citing_authorListPerPMIDGrouped})
+    df = pd.DataFrame(data = {'PMID': source_PMIDs, 'citing_PMIDs':cited_by_list, 'citing_author_list':citing_author_list_per_PMID_grouped})
 
     # Total citations per source PMID
     df["tot_citations"] = [len(row) for row in df["citing_PMIDs"]]
@@ -56,20 +56,20 @@ def get_authorListCounts(sourcePMIDs):
 
     # Getting the full list of unique citing authors with counts
     ## Flatten list of lists for each source PMID
-    full_authorList = [author for article in df["citing_authorList"].tolist() for authorList in article for author in authorList]
+    full_authorList = [author for article in df["citing_author_list"].tolist() for authorList in article for author in authorList]
 
 
     ## Get counts
     from collections import Counter
-    authorListCounts = dict(Counter(full_authorList))
+    author_list_counts = dict(Counter(full_authorList))
 
-    return authorListCounts
+    return author_list_counts
 
 
-def getCitedByPMIDs(inputPMIDList):
+def get_cited_by_PMIDs(input_PMID_list):
     """Request "cited by" table for list of PMIDs from PubMed API
 
-    :param inputPMIDList: Comma separated string of PMIDs or list of PMIDs
+    :param input_PMID_list: Comma separated string of PMIDs or list of PMIDs
     :return: List with sublists. One sublist per input PMID, the sublist contains PMIDs of papers that have cited
              the input PMID
     """
@@ -82,7 +82,7 @@ def getCitedByPMIDs(inputPMIDList):
     params = {
         "dbfrom": "pubmed",
         "linkname": "pubmed_pubmed_citedin",
-        "id": inputPMIDList,
+        "id": input_PMID_list,
         "retmax": 100000,
         "api_key": None
     }
@@ -98,7 +98,7 @@ def getCitedByPMIDs(inputPMIDList):
     LinkSets = root.findall('LinkSet')
 
     # Iterate over input PMIDs and store the PMIDs of the articles that cite the input article
-    citedByList = []
+    cited_by_list = []
     for LinkSet in LinkSets:
         citedBy = []
 
@@ -107,16 +107,16 @@ def getCitedByPMIDs(inputPMIDList):
             for id in LinkSet.find('LinkSetDb').iter('Id'):
                 citedBy.append(id.text)
 
-        citedByList.append(citedBy)
+        cited_by_list.append(citedBy)
 
 
-    return citedByList
+    return cited_by_list
 
-def getPMIDsMetaData(inputPMIDList):
+def getPMIDsMetaData(input_PMID_list):
     """Get metadata for list of PMIDs from PubMed API
 
 
-    :param inputPMIDList:  Comma separated string of PMIDs or list of PMIDs
+    :param input_PMID_list:  Comma separated string of PMIDs or list of PMIDs
     :return: Tuple with 2 values:
                 - List containing sublists, one sublist per input PMID. Sublist contains authors of input PMID
                 - List containing titles of input PMIDs
@@ -126,13 +126,13 @@ def getPMIDsMetaData(inputPMIDList):
     # Base URL of the API
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
 
-    inputPMIDList = ','.join(map(str, inputPMIDList))
+    input_PMID_list = ','.join(map(str, input_PMID_list))
 
     # Parameters for API call
 
     params = {
         "db": "pubmed",
-        "id": inputPMIDList,
+        "id": input_PMID_list,
         "retmax": 100000,
         "api_key": None
 
@@ -162,12 +162,12 @@ def getPMIDsMetaData(inputPMIDList):
 
 
 
-def searchDB(searchTerm):
+def search_DB(search_term):
     """Searches PubMed database for articles using searchTerm
 
     The returned articles are the same if you use searchTerm on the PubMed website
 
-    :param searchTerm: String to search the database with
+    :param search_term: String to search the database with
     :return: List of PMIDs
     """
 
@@ -177,7 +177,7 @@ def searchDB(searchTerm):
     # Parameters for API call
     params = {
         "db": "pubmed",
-        "term": searchTerm,
+        "term": search_term,
         "retmax": 100000,
         "api_key": None
 
@@ -190,18 +190,18 @@ def searchDB(searchTerm):
     root = tree.getroot()
 
 
-    IdList = root.find('IdList')
+    id_list = root.find('IdList')
 
-    PMIDList = []
-    for PMID in IdList:
-        PMIDList.append(PMID.text)
+    PMID_List = []
+    for PMID in id_list:
+        PMID_List.append(PMID.text)
 
-    return PMIDList
+    return PMID_List
 
 
 # Finding cited paper by citing author
 
-def find_citedArticle(search_string, df):
+def find_cited_article(search_string, df):
     """Find the PMID that a given author has cited based on what is saved in df (DataFrame)
 
     :param search_string: string containing name of author (has to be in the same format PubMed saves author names in)
@@ -210,7 +210,7 @@ def find_citedArticle(search_string, df):
     """
 
     matched_PMIDs = []
-    for i, article in enumerate(df["citing_authorList"]):
+    for i, article in enumerate(df["citing_author_list"]):
         for authorList in article:
             if search_string in authorList:
                 matched_PMIDs.append(df.iloc[i]["PMID"])
@@ -219,22 +219,22 @@ def find_citedArticle(search_string, df):
 
 
 # Group elements of list into of sublists
-def groupListElements(inputList, groupSizes):
+def group_list_elements(input_list, group_sizes):
     """Makes sublists within a list
 
-    Sizes of sublists are defined by list elements of groupSizes.
+    Sizes of sublists are defined by list elements of group_sizes.
 
-    TODO: Account for size discrepancies. Enforce sum(groupSizes) == len(inputList)
+    TODO: Account for size discrepancies. Enforce sum(group_sizes) == len(input_list)
 
-    :param inputList: List that you want to make sublists in
-    :param groupSizes:  List containing the size you want each sublist to be
-    :return: New list with elements of inputList as sublists of sizes defined in groupSizes
+    :param input_list: List that you want to make sublists in
+    :param group_sizes:  List containing the size you want each sublist to be
+    :return: New list with elements of inputList as sublists of sizes defined in group_sizes
     """
 
     from itertools import islice
-    it = iter(inputList)
+    it = iter(input_list)
 
-    groupedList = [list(islice(it, 0, i)) for i in groupSizes]
+    grouped_list = [list(islice(it, 0, i)) for i in group_sizes]
 
-    return groupedList
+    return grouped_list
 

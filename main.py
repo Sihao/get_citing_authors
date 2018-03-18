@@ -15,11 +15,11 @@ def index():
     """
     return render_template('index.html')
 
-@app.route('/authorListCountsSearch', methods = ['POST'])
-def return_authorListCountsSearch():
-    """Present user with download for get_authorListCountsSearch() output
+@app.route('/author_list_counts_search', methods = ['POST'])
+def return_author_list_counts_search():
+    """Present user with download for get_author_list_counts_search() output
 
-    Input from form field 'searchString' is passed to get_authorListCountsSearch()
+    Input from form field 'searchString' is passed to get_author_list_counts_search()
     whose output is written to a csv file which is made available for download.
 
 
@@ -27,14 +27,14 @@ def return_authorListCountsSearch():
     """
 
     # Get searchString from form field
-    searchString = request.form['searchString']
+    searchString = request.form['search_string']
 
     # Create IO object to write file to
     si = StringIO()
 
     # Write csv file
     writer = csv.writer(si, delimiter=',')
-    writer.writerows(get_authorListCountsSearch(searchString).items())
+    writer.writerows(get_author_list_counts_search(searchString).items())
 
     # Construct file output
     output = make_response(si.getvalue())
@@ -44,11 +44,11 @@ def return_authorListCountsSearch():
     return output
 
 
-@app.route('/authorListCountsPMIDs', methods = ['POST'])
+@app.route('/author_list_counts_PMIDs', methods = ['POST'])
 def return_authorListCounts():
-    """Present user with download for get_authorListCounts() output
+    """Present user with download for get_author_list_counts() output
 
-       Input from form field 'searchString' is passed to get_authorListCounts()
+       Input from form field 'searchString' is passed to get_author_list_counts()
        whose output is written to a csv file which is made available for download.
 
 
@@ -58,14 +58,14 @@ def return_authorListCounts():
 
 
     # Get list of input PMIDs from form field
-    inputPMIDList = request.form['inputPMIDList']
+    inputPMIDList = request.form['input_PMID_List']
 
     # Create IO object to write file to
     si = StringIO()
 
     # Write csv file
     writer = csv.writer(si, delimiter=',')
-    writer.writerows(get_authorListCounts({inputPMIDList}).items())
+    writer.writerows(get_author_list_counts({inputPMIDList}).items())
 
     # Construct file output
     output = make_response(si.getvalue())
