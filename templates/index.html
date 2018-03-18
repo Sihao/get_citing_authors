@@ -4,6 +4,7 @@
 
 <div class="container">
 
+        <!-- Form for return_authorListCountsSearch() -->
         <div class="col-md-8">
             <form action="{{ url_for('return_authorListCountsSearch') }}" method="post">
                 <div class="form-group">
@@ -22,7 +23,8 @@
                 </div>
             </form>
 
-            <form action="{{ url_for('return_authorListCountsPMIDs') }}" method="post">
+            <!-- Form for return_authorListCounts() -->
+            <form action="{{ url_for('return_authorListCounts') }}" method="post">
                 <div class="form-group">
                     <div class="form-group row">
                         <label class="col-6 col-form-label">Enter list of PMIDs</label>

@@ -5,18 +5,30 @@ import pandas as pd
 from itertools import chain
 
 def get_authorListCountsSearch(searchString):
+    """Returns a list of authors that have cited papers from search result
 
-    # Get source PMIDs with search term
+
+    :param searchString: PubMed search string to use for the database search
+    :return: dict containing author names as keys and number of occurrences as values
+    """
+
+    # Get source PMIDs (PubMed ID) with search term
     sourcePMIDs = searchDB(searchString)
 
     return get_authorListCounts(sourcePMIDs)
 
-def get_authorListCountsList(inputPMIDList):
-
-    return get_authorListCounts(inputPMIDList)
 
 
 def get_authorListCounts(sourcePMIDs):
+    """Returns a list of authors that have cited papers from list of PMIDs
+
+    Constructs a pandas DataFrame using data returned by PubMed API
+
+    TODO: output df
+
+    :param sourcePMIDs: Comma separated string of PMIDs or list of PMIDs
+    :return: dict containing author names as keys and number of occurrences as values
+    """
 
     # Get list of articles that sort each PMID from source list
     citedByList = getCitedByPMIDs(sourcePMIDs)
@@ -55,7 +67,12 @@ def get_authorListCounts(sourcePMIDs):
 
 
 def getCitedByPMIDs(inputPMIDList):
+    """Request "cited by" table for list of PMIDs from PubMed API
 
+    :param inputPMIDList: Comma separated string of PMIDs or list of PMIDs
+    :return: List with sublists. One sublist per input PMID, the sublist contains PMIDs of papers that have cited
+             the input PMID
+    """
 
     # Base URL of the API
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi"
@@ -67,7 +84,7 @@ def getCitedByPMIDs(inputPMIDList):
         "linkname": "pubmed_pubmed_citedin",
         "id": inputPMIDList,
         "retmax": 100000,
-        "api_key": "f818626ea79d1dfa33c18960ae05dbc8f808"
+        "api_key": None
     }
 
     # Request the XML response from the API
@@ -95,21 +112,31 @@ def getCitedByPMIDs(inputPMIDList):
 
     return citedByList
 
-def getPMIDsMetaData(inputPMID):
+def getPMIDsMetaData(inputPMIDList):
+    """Get metadata for list of PMIDs from PubMed API
+
+
+    :param inputPMIDList:  Comma separated string of PMIDs or list of PMIDs
+    :return: Tuple with 2 values:
+                - List containing sublists, one sublist per input PMID. Sublist contains authors of input PMID
+                - List containing titles of input PMIDs
+    """
+
+
     # Base URL of the API
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
 
-    inputPMID = ','.join(map(str, inputPMID))
+    inputPMIDList = ','.join(map(str, inputPMIDList))
 
     # Parameters for API call
+
     params = {
         "db": "pubmed",
-        "id": inputPMID,
+        "id": inputPMIDList,
         "retmax": 100000,
-        "api_key": "f818626ea79d1dfa33c18960ae05dbc8f808"
+        "api_key": None
 
     }
-
     # Request the XML response from the API
     response = requests.post(base_url, data=params)
 
@@ -136,6 +163,14 @@ def getPMIDsMetaData(inputPMID):
 
 
 def searchDB(searchTerm):
+    """Searches PubMed database for articles using searchTerm
+
+    The returned articles are the same if you use searchTerm on the PubMed website
+
+    :param searchTerm: String to search the database with
+    :return: List of PMIDs
+    """
+
     # Base URL of the API
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 
@@ -144,7 +179,7 @@ def searchDB(searchTerm):
         "db": "pubmed",
         "term": searchTerm,
         "retmax": 100000,
-        "api_key": "f818626ea79d1dfa33c18960ae05dbc8f808"
+        "api_key": None
 
     }
 
@@ -167,6 +202,12 @@ def searchDB(searchTerm):
 # Finding cited paper by citing author
 
 def find_citedArticle(search_string, df):
+    """Find the PMID that a given author has cited based on what is saved in df (DataFrame)
+
+    :param search_string: string containing name of author (has to be in the same format PubMed saves author names in)
+    :param df: DataFrame object where citing relations are stored
+    :return: List of PMIDs that author given in search_string has cited
+    """
 
     matched_PMIDs = []
     for i, article in enumerate(df["citing_authorList"]):
@@ -179,6 +220,16 @@ def find_citedArticle(search_string, df):
 
 # Group elements of list into of sublists
 def groupListElements(inputList, groupSizes):
+    """Makes sublists within a list
+
+    Sizes of sublists are defined by list elements of groupSizes.
+
+    TODO: Account for size discrepancies. Enforce sum(groupSizes) == len(inputList)
+
+    :param inputList: List that you want to make sublists in
+    :param groupSizes:  List containing the size you want each sublist to be
+    :return: New list with elements of inputList as sublists of sizes defined in groupSizes
+    """
 
     from itertools import islice
     it = iter(inputList)
