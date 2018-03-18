@@ -41,7 +41,7 @@ def get_author_list_counts(source_PMIDs):
 
 
     # Get metadata for each of the articles that cite the source articles (authors and titles)
-    citing_author_list_per_PMID, _ = getPMIDsMetaData(flat_cited_by_list) # Contains citing author list for all source PMIDs
+    citing_author_list_per_PMID, _ = get_PMIDs_metadata(flat_cited_by_list) # Contains citing author list for all source PMIDs
 
     # Group author list per source PMID
     citing_author_list_per_PMID_grouped = group_list_elements(citing_author_list_per_PMID, citations_per_PMID)
@@ -112,7 +112,7 @@ def get_cited_by_PMIDs(input_PMID_list):
 
     return cited_by_list
 
-def getPMIDsMetaData(input_PMID_list):
+def get_PMIDs_metadata(input_PMID_list):
     """Get metadata for list of PMIDs from PubMed API
 
 
