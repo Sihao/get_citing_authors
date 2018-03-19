@@ -32,9 +32,13 @@ def return_author_list_counts_search():
     # Create IO object to write file to
     si = StringIO()
 
+    # Sort author list in descending order
+    author_list = get_author_list_counts_search(search_string)
+    author_list = sorted(author_list.items(), key=lambda x: x[1], reverse=True)
+
     # Write csv file
     writer = csv.writer(si, delimiter=',')
-    writer.writerows(get_author_list_counts_search(search_string).items())
+    writer.writerows(author_list)
 
     # Construct file output
     output = make_response(si.getvalue())
@@ -63,9 +67,13 @@ def return_authorListCounts():
     # Create IO object to write file to
     si = StringIO()
 
+    # Sort author list in descending order
+    author_list = get_author_list_counts({input_PMID_list})
+    author_list = sorted(author_list.items(), key=lambda x: x[1], reverse=True)
+
     # Write csv file
     writer = csv.writer(si, delimiter=',')
-    writer.writerows(get_author_list_counts({input_PMID_list}).items())
+    writer.writerows(author_list)
 
     # Construct file output
     output = make_response(si.getvalue())
