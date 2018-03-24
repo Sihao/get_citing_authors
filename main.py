@@ -2,7 +2,6 @@ from flask import Flask, render_template, make_response, request
 
 from utils import *
 
-from io import StringIO
 
 import csv
 app = Flask(__name__)
@@ -26,29 +25,15 @@ def return_author_list_counts_search():
     :return: csv file containing rows of authors together with number of times they have cited papers returned by search
     """
 
-
     # Get search_string from form field
     search_string = request.form['search_string']
-
-    # Create IO object to write file to
-    si = StringIO()
 
     # Sort author list in descending order
     author_list = get_author_list_counts_search(search_string)
     author_list = sorted(author_list.items(), key=lambda x: x[1], reverse=True)
 
-    # Write csv file
-    writer = csv.writer(si, delimiter=',')
-    writer.writerows(author_list)
-
-    # Construct file output
-    output = make_response(si.getvalue())
-    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-    output.headers["Content-type"] = "text/csv"
-
-
     if (request.form['action'] == "Download"):
-        return output
+        return output_csv(author_list)
 
     elif (request.form['action'] == "View"):
         return render_template('list_view.html', dict=author_list)
@@ -70,28 +55,20 @@ def return_authorListCounts():
     # Get list of input PMIDs from form field
     input_PMID_list = request.form['input_PMID_List']
 
-    # Create IO object to write file to
-    si = StringIO()
-
     # Sort author list in descending order
     author_list = get_author_list_counts({input_PMID_list})
     author_list = sorted(author_list.items(), key=lambda x: x[1], reverse=True)
 
-    # Write csv file
-    writer = csv.writer(si, delimiter=',')
-    writer.writerows(author_list)
-
-    # Construct file output
-    output = make_response(si.getvalue())
-    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-    output.headers["Content-type"] = "text/csv"
-
     if (request.form['action'] == "Download") :
-        return output
+        return output_csv(author_list)
 
     elif (request.form['action'] == "View"):
         return render_template('list_view.html', dict=author_list)
 
+@app.route('/get_csv', methods = ['POST'])
+def return_csv():
+    author_list = request.form['author_list']
+    return output_csv(author_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
