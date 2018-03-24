@@ -1,0 +1,25 @@
+{% extends 'main.html' %}
+{% block title %}fetchCitation{% endblock %}
+{% block content %}
+
+<div class="container">
+
+    <table class="tableSection">
+        <thead>
+            <tr>
+                <th>Author name</th>
+                <td>Citation count</td>
+            </tr>
+        </thead>
+        {% for author, citation_count in dict %}
+        <tr>
+            <th> {{ author }}</th>
+            <td> {{ citation_count}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+
+{% endblock %}
