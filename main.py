@@ -26,6 +26,7 @@ def return_author_list_counts_search():
     :return: csv file containing rows of authors together with number of times they have cited papers returned by search
     """
 
+
     # Get search_string from form field
     search_string = request.form['search_string']
 
@@ -45,7 +46,12 @@ def return_author_list_counts_search():
     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
     output.headers["Content-type"] = "text/csv"
 
-    return output
+
+    if (request.form['action'] == "Download"):
+        return output
+
+    elif (request.form['action'] == "View"):
+        return render_template('list_view.html', dict=author_list)
 
 
 @app.route('/author_list_counts_PMIDs', methods = ['POST'])
@@ -80,11 +86,15 @@ def return_authorListCounts():
     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
     output.headers["Content-type"] = "text/csv"
 
-    return output
+    if (request.form['action'] == "Download") :
+        return output
+
+    elif (request.form['action'] == "View"):
+        return render_template('list_view.html', dict=author_list)
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
 
 
 
