@@ -2,6 +2,7 @@ from flask import Flask, render_template, make_response, request
 
 from utils import *
 
+import ast
 
 import csv
 app = Flask(__name__)
@@ -65,9 +66,18 @@ def return_authorListCounts():
     elif (request.form['action'] == "View"):
         return render_template('list_view.html', dict=author_list)
 
-@app.route('/get_csv', methods = ['POST'])
+@app.route('/return_csv', methods = ['POST'])
 def return_csv():
+    """
+    Returns csv file of list posted to this route with name 'author_list'
+    :return: csv file to download
+    """
+
     author_list = request.form['author_list']
+
+    # Convert string representation of list back to list object
+    author_list = ast.literal_eval(author_list)
+
     return output_csv(author_list)
 
 if __name__ == '__main__':
