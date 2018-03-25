@@ -4,6 +4,10 @@ import xml.etree.cElementTree as ET
 import pandas as pd
 from itertools import chain
 
+from io import StringIO
+from flask import make_response
+import csv
+
 def get_author_list_counts_search(search_string):
     """Returns a list of authors that have cited papers from search result
 
@@ -238,3 +242,23 @@ def group_list_elements(input_list, group_sizes):
 
     return grouped_list
 
+def output_csv(author_list):
+    """
+    Takes an author list dict and outputs a csv as a download
+    :param author_list: input dict containing authors as keys and citation counts as values
+                        or list containing tuples with 2 values, author and citation count respectively
+    :return: csv file to download
+    """
+    # Create IO object to write file to
+    si = StringIO()
+
+    # Write csv file
+    writer = csv.writer(si, delimiter=',')
+    writer.writerows(author_list)
+
+    # Construct file output
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-type"] = "text/csv"
+
+    return output
