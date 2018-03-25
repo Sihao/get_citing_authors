@@ -3,21 +3,35 @@
 {% block content %}
 
 <div class="container">
+    <form action="{{ url_for('return_csv') }}" method="post">
 
-    <table class="tableSection">
-        <thead>
+        <table class="tableSection">
+            <thead>
             <tr>
                 <th>Author name</th>
                 <td>Citation count</td>
             </tr>
-        </thead>
-        {% for author, citation_count in dict %}
-        <tr>
-            <th> {{ author }}</th>
-            <td> {{ citation_count}}</td>
-        </tr>
-        {% endfor %}
-    </table>
+            </thead>
+            {% for author, citation_count in dict %}
+            <tr>
+                <th> {{ author }}</th>
+                <td> {{ citation_count}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="form-group">
+            <div class="form-group row">
+                <input  name="author_list" value="{{dict}}">
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action"
+                        value="Download">Download list
+                </button>
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
 
 </div>
 
