@@ -8,14 +8,16 @@
         <table class="tableSection">
             <thead>
             <tr>
-                <th>Author name</th>
+                <td>Author name</td>
                 <td>Citation count</td>
+                <td>Cited PMIDs</td>
             </tr>
             </thead>
-            {% for author, citation_count in dict %}
+            {% for author, citation_count, citing_PMIDs in dict %}
             <tr>
-                <th> {{ author }}</th>
+                <td> {{ author }}</td>
                 <td> {{ citation_count}}</td>
+                <td> {{ citing_PMIDs }}</td>
             </tr>
             {% endfor %}
         </table>

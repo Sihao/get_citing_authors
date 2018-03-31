@@ -29,15 +29,26 @@ def return_author_list_counts_search():
     # Get search_string from form field
     search_string = request.form['search_string']
 
-    # Sort author list in descending order
-    author_list = get_author_list_counts_search(search_string)
-    author_list = sorted(author_list.items(), key=lambda x: x[1], reverse=True)
+    # Get list of authors and citing PMIDs from database
+    author_list, citing_PMIDs = get_author_list_counts_search(search_string)
+
+    # Split author list with cite counts into two separate lists
+    author_names, cite_counts = list(zip(*author_list.items()))
+
+    # Convert citing_PMIDs to list of tuples
+    citing_PMIDs = [tuple(PMIDs) for PMIDs in citing_PMIDs]
+
+    # Zip author names, citation counts and citing PMIDs into one tuple
+    author_list_with_citing_PMIDs = list(zip(author_names,cite_counts,citing_PMIDs))
+
+    # Sort list in descending citation count order
+    author_list_with_citing_PMIDs = sorted(author_list_with_citing_PMIDs, key=lambda x: x[1], reverse=True)
 
     if (request.form['action'] == "Download"):
-        return output_csv(author_list)
+        return output_csv(author_list_with_citing_PMIDs)
 
     elif (request.form['action'] == "View"):
-        return render_template('list_view.html', dict=author_list)
+        return render_template('list_view.html', dict=author_list_with_citing_PMIDs)
 
 
 @app.route('/author_list_counts_PMIDs', methods = ['POST'])
@@ -54,17 +65,29 @@ def return_authorListCounts():
 
 
     # Get list of input PMIDs from form field
-    input_PMID_list = request.form['input_PMID_List']
+    ## Input comma seperated PMIDs need to be transformed from set to list
+    input_PMID_list = request.form['input_PMID_List'].split(',')
 
-    # Sort author list in descending order
-    author_list = get_author_list_counts({input_PMID_list})
-    author_list = sorted(author_list.items(), key=lambda x: x[1], reverse=True)
+    # Get list of authors and citing PMIDs from database
+    author_list, citing_PMIDs = get_author_list_counts(input_PMID_list)
+
+    # Split author list with cite counts into two separate lists
+    author_names, cite_counts = list(zip(*author_list.items()))
+
+    # Convert citing_PMIDs to list of tuples
+    citing_PMIDs = [tuple(PMIDs) for PMIDs in citing_PMIDs]
+
+    # Zip author names, citation counts and citing PMIDs into one tuple
+    author_list_with_citing_PMIDs = list(zip(author_names, cite_counts, citing_PMIDs))
+
+    # Sort list in descending citation count order
+    author_list_with_citing_PMIDs = sorted(author_list_with_citing_PMIDs, key=lambda x: x[1], reverse=True)
 
     if (request.form['action'] == "Download") :
-        return output_csv(author_list)
+        return output_csv(author_list_with_citing_PMIDs)
 
     elif (request.form['action'] == "View"):
-        return render_template('list_view.html', dict=author_list)
+        return render_template('list_view.html', dict=author_list_with_citing_PMIDs)
 
 @app.route('/return_csv', methods = ['POST'])
 def return_csv():
