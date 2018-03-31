@@ -66,10 +66,10 @@ def get_author_list_counts(source_PMIDs):
     ## Get counts
     from collections import Counter
     author_list_counts = dict(Counter(full_authorList))
-    citing_PMIDs = [find_cited_article(author, df) for author in author_list_counts.keys()]
+    cited_PMIDs = [find_cited_article(author, df) for author in author_list_counts.keys()]
 
 
-    return author_list_counts, citing_PMIDs
+    return author_list_counts, cited_PMIDs
 
 
 def get_cited_by_PMIDs(input_PMID_list):
