@@ -39,3 +39,8 @@ table.tableSection tr {
 table.tableSection th, table.tableSection td {
     width: 33%;
 }
+
+table tr:hover {
+    background: silver;
+    cursor: pointer;
+}
