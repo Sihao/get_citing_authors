@@ -184,7 +184,7 @@ def search_DB(search_term):
     params = {
         "db": "pubmed",
         "term": search_term,
-        "retmax": 100000,
+        "retmax": 300,
         "api_key": None
 
     }
