@@ -90,7 +90,8 @@ def get_cited_by_PMIDs(input_PMID_list):
         "linkname": "pubmed_pubmed_citedin",
         "id": input_PMID_list,
         "retmax": 100000,
-        "api_key": None
+        "api_key": None,
+        "sort": 'relevance'
     }
 
     # Request the XML response from the API
@@ -140,7 +141,8 @@ def get_PMIDs_metadata(input_PMID_list):
         "db": "pubmed",
         "id": input_PMID_list,
         "retmax": 100000,
-        "api_key": None
+        "api_key": None,
+        "sort": 'relevance'
 
     }
     # Request the XML response from the API
