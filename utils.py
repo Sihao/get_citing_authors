@@ -52,24 +52,35 @@ def get_author_list_counts(source_PMIDs):
 
 
     # Construct DataFrame using extracted data
-    df = pd.DataFrame(data = {'PMID': source_PMIDs, 'citing_PMIDs':cited_by_list, 'citing_author_list':citing_author_list_per_PMID_grouped})
+    df = create_dataframe(source_PMIDs, cited_by_list, citing_author_list_per_PMID_grouped)
 
-    # Total citations per source PMID
-    df["tot_citations"] = [len(row) for row in df["citing_PMIDs"]]
+    grouped = df.groupby('citing_author').aggregate(lambda x: ','.join(x).split(','))
+    grouped['author_counts'] = grouped['PMID'].apply(lambda x: len(x))
 
+    cited_PMIDs = grouped['PMID']
 
-    # Getting the full list of unique citing authors with counts
-    ## Flatten list of lists for each source PMID
-    full_authorList = [author for article in df["citing_author_list"].tolist() for authorList in article for author in authorList]
-
-
-    ## Get counts
-    from collections import Counter
-    author_list_counts = dict(Counter(full_authorList))
-    cited_PMIDs = [find_cited_article(author, df) for author in author_list_counts.keys()]
-
+    author_list_counts = dict(zip(grouped.index.tolist(), grouped['author_counts'].tolist()))
 
     return author_list_counts, cited_PMIDs
+
+def create_dataframe(source_PMIDs, cited_by_list, citing_author_list_per_PMID_grouped):
+
+    df = pd.DataFrame(data={'PMID': source_PMIDs, 'citing_PMIDs': cited_by_list,
+                            'citing_author_list': citing_author_list_per_PMID_grouped})
+
+    cP = df.apply(lambda x: pd.Series(x['citing_PMIDs']), axis=1).stack().reset_index(level=1, drop=True)
+    cAs = df.apply(lambda x: pd.Series(x['citing_author_list']), axis=1).stack().reset_index(level=1, drop=True)
+    cP.name = 'citing_PMID'
+    cAs.name = 'citing_authors'
+    df = df.drop('citing_PMIDs', axis=1).drop('citing_author_list', axis=1).join(pd.concat([cP, cAs], axis=1))
+    df = df.reset_index(drop=True)
+
+    cA = df.apply(lambda x: pd.Series(x['citing_authors']), axis=1).stack().reset_index(level=1, drop=True)
+    cA.name = 'citing_author'
+    df = df.drop('citing_authors', axis=1).join(cA, how='right')
+    df = df.reset_index(drop=True)
+
+    return df
 
 
 def get_cited_by_PMIDs(input_PMID_list):
