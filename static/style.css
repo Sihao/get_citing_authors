@@ -37,7 +37,11 @@ table.tableSection tr {
     text-align: left;
 }
 table.tableSection th, table.tableSection td {
-    width: 33%;
+    width: 25%;
+}
+
+table.tableSection td#cite_count {
+    width: 10%;
 }
 
 table tr:hover {

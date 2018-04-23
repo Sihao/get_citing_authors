@@ -58,10 +58,11 @@ def get_author_list_counts(source_PMIDs):
     grouped['author_counts'] = grouped['PMID'].apply(lambda x: len(x))
 
     cited_PMIDs = grouped['PMID']
+    citing_PMIDs = grouped['citing_PMID']
 
     author_list_counts = dict(zip(grouped.index.tolist(), grouped['author_counts'].tolist()))
 
-    return author_list_counts, cited_PMIDs
+    return author_list_counts, cited_PMIDs, citing_PMIDs
 
 def create_dataframe(source_PMIDs, cited_by_list, citing_author_list_per_PMID_grouped):
 

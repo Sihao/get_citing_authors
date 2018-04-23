@@ -9,15 +9,17 @@
             <thead>
             <tr>
                 <td>Author name</td>
-                <td>Citation count</td>
+                <td id="cite_count">Citation count</td>
                 <td>Cited PMIDs</td>
+                <td>Citing PMIDs</td>
             </tr>
             </thead>
-            {% for author, citation_count, cited_PMIDs in dict %}
+            {% for author, citation_count, cited_PMIDs, citing_PMIDs in dict %}
             <tr>
                 <td> {{ author }}</td>
-                <td> {{ citation_count}}</td>
+                <td id="cite_count"> {{ citation_count}}</td>
                 <td> {{ cited_PMIDs }}</td>
+                <td> {{ citing_PMIDs }}</td>
             </tr>
             {% endfor %}
         </table>
