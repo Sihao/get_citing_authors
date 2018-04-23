@@ -13,11 +13,11 @@
                 <td>Cited PMIDs</td>
             </tr>
             </thead>
-            {% for author, citation_count, citing_PMIDs in dict %}
+            {% for author, citation_count, cited_PMIDs in dict %}
             <tr>
                 <td> {{ author }}</td>
                 <td> {{ citation_count}}</td>
-                <td> {{ citing_PMIDs }}</td>
+                <td> {{ cited_PMIDs }}</td>
             </tr>
             {% endfor %}
         </table>
