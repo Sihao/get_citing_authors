@@ -29,8 +29,14 @@ def return_author_list_counts_search():
     # Get search_string from form field
     search_string = request.form['search_string']
 
+    # Check if drop_source_author checkbox is ticked
+    if 'drop_source_authors' in request.form:
+        boolean = True
+    else:
+        boolean = False
+
     # Get list of authors and cited PMIDs from database
-    author_list, cited_PMIDs, citing_PMIDs = get_author_list_counts_search(search_string)
+    author_list, cited_PMIDs, citing_PMIDs = get_author_list_counts_search(search_string, drop_source_authors=boolean)
 
     # Split author list with cite counts into two separate lists
     author_names, cite_counts = list(zip(*author_list.items()))
@@ -69,8 +75,14 @@ def return_authorListCounts():
     ## Input comma seperated PMIDs need to be transformed from set to list
     input_PMID_list = request.form['input_PMID_List'].split(',')
 
+    # Check if drop_source_author checkbox is ticked
+    if 'drop_source_authors' in request.form:
+        boolean = True
+    else:
+        boolean = False
+
     # Get list of authors and cited PMIDs from database
-    author_list, cited_PMIDs, citing_PMIDs = get_author_list_counts(input_PMID_list)
+    author_list, cited_PMIDs, citing_PMIDs = get_author_list_counts(input_PMID_list, drop_source_authors=boolean)
 
     # Split author list with cite counts into two separate lists
     author_names, cite_counts = list(zip(*author_list.items()))
