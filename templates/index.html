@@ -4,53 +4,72 @@
 
 <div class="container">
 
-        <!-- Form for return_author_list_counts_search() -->
-        <div class="col-md-8">
-            <form action="{{ url_for('return_author_list_counts_search') }}" method="post">
-                <div class="form-group">
-                    <div class="form-group row">
-                        <label class="col-6 col-form-label">Enter PubMed search
-                            string</label>
-                        <div class="col-10">
-                            <input class="form-control" type="search" value="" name="search_string" required="true">
-
-                            <input type="checkbox" name="drop_source_authors" value="drop"> Remove co-authors <br>
-
-                            <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action" value="Download">Download list
-                            </button>
-
-                            <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action" value="View">View list
-                            </button>
+    <!-- Form for return_author_list_counts_search() -->
+    <div class="col-md-10">
+        <form action="{{ url_for('return_author_list_counts_search') }}" method="post">
+            <div class="form-group">
+                <div class="form-group row">
+                    <label class="col-6 col-form-label">Enter PubMed search
+                        string</label>
+                    <div class="col-12">
+                        <input class="form-control" type="search" value="" name="search_string" required="true">
 
 
-                        </div>
+                        <input type="radio" name="option" value="exclude_source"> Exclude co-authors from the
+                        results.
+                        (This will still include papers from those authors.)<br>
+
+                        <input type="radio" name="option" value="aggressive_exclude_source"> Exclude any papers
+                        written by co-authors. (Includes only papers authored exclusively by people who are not
+                        coauthors on any of the source list of publications.)<br>
+
+                        <input type="radio" name="option" value="all" checked="checked"> Include everything <br>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action"
+                                value="Download">Download list
+                        </button>
+
+                        <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action"
+                                value="View">View list
+                        </button>
+
+
                     </div>
-
                 </div>
-            </form>
 
-            <!-- Form for return_authorListCounts() -->
-            <form action="{{ url_for('return_authorListCounts') }}" method="post">
-                <div class="form-group">
-                    <div class="form-group row">
-                        <label class="col-6 col-form-label">Enter list of PMIDs</label>
-                        <div class="col-10">
-                            <input class="form-control" type="search" value="" name="input_PMID_List" required="true">
+            </div>
+        </form>
 
-                            <input type="checkbox" name="drop_source_authors" value="drop"> Remove co-authors <br>
+        <!-- Form for return_authorListCounts() -->
+        <form action="{{ url_for('return_authorListCounts') }}" method="post">
+            <div class="form-group">
+                <div class="form-group row">
+                    <label class="col-6 col-form-label">Enter list of PMIDs</label>
+                    <div class="col-12">
+                        <input class="form-control" type="search" value="" name="input_PMID_List" required="true">
 
-                            <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action" value="Download">Download list
-                            </button>
+                        <input type="radio" name="option" value="exclude_source"> Exclude co-authors from the
+                        results.
+                        (This will still include papers from those authors.)<br>
 
-                            <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action" value="View">View list
-                            </button>
+                        <input type="radio" name="option" value="aggressive_exclude_source"> Exclude any papers
+                        written by co-authors. (Includes only papers authored exclusively by people who are not
+                        coauthors on any of the source list of publications.)<br>
 
-                        </div>
+                        <input type="radio" name="option" value="all" checked="checked"> Include everything <br>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action"
+                                value="Download">Download list
+                        </button>
+
+                        <button type="submit" class="btn btn-primary" style="margin-top: 20px" name="action"
+                                value="View">View list
+                        </button>
+
                     </div>
-
                 </div>
-            </form>
-        </div>
+
+            </div>
+        </form>
+    </div>
 
 </div>
 

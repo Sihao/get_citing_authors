@@ -8,23 +8,40 @@ from io import StringIO
 from flask import make_response
 import csv
 
-def get_author_list_counts_search(search_string, drop_source_authors = False):
+def get_author_list_counts_search(search_string, option = 'all'):
     """Returns a list of authors that have cited papers from search result
 
 
     :param search_string: PubMed search string to use for the database search
+
+    :param options: string option for omitting source authors from output
+                    three options: 'all', 'exclude_source', 'aggressive_exclude_source'
+                    'all': include all results,
+                    'exclude_source': exclude authors from source PMIDs,
+                    'aggressive_exclude_source': exclude authors from source PMIDs and any authors who have
+                    co-authored with any of the source authors
+
     :return: dict containing author names as keys and number of occurrences as values
     """
 
     # Get source PMIDs (PubMed ID) with search term
     source_PMIDs = search_DB(search_string)
 
-    return get_author_list_counts(source_PMIDs, drop_source_authors)
+    return get_author_list_counts(source_PMIDs, option)
 
 
 
-def get_author_list_counts(source_PMIDs, drop_source_authors = False):
+def get_author_list_counts(source_PMIDs, option = 'all'):
     """Returns a list of authors that have cited papers from list of PMIDs
+
+    :param options: string option for omitting source authors from output
+                three options: 'all', 'exclude_source', 'aggressive_exclude_source'
+                'all': include all results,
+                'exclude_source': exclude authors from source PMIDs,
+                'aggressive_exclude_source': exclude authors from source PMIDs and any authors who have
+                co-authored with any of the source authors
+    :return: dict containing author names as keys and number of occurrences as values
+
 
     Constructs a pandas DataFrame using data returned by PubMed API
 
@@ -50,7 +67,6 @@ def get_author_list_counts(source_PMIDs, drop_source_authors = False):
     # Group author list per source PMID
     citing_author_list_per_PMID_grouped = group_list_elements(citing_author_list_per_PMID, citations_per_PMID)
 
-
     # Construct DataFrame using extracted data
     df = create_dataframe(source_PMIDs, cited_by_list, citing_author_list_per_PMID_grouped)
 
@@ -58,8 +74,10 @@ def get_author_list_counts(source_PMIDs, drop_source_authors = False):
     grouped['author_counts'] = grouped['PMID'].apply(lambda x: len(x))
 
     # Remove source authors if option is selected
-    if drop_source_authors == True:
+    if option == 'exclude_source':
         remove_source_authors(grouped)
+    elif option == 'aggressive_exclude_source':
+        aggressive_remove_source_authors(grouped, citing_author_list_per_PMID_grouped)
 
     # Seperate cited and citing PMIDs into seperate lists
     cited_PMIDs = grouped['PMID']
@@ -113,6 +131,38 @@ def remove_source_authors(df):
 
 
     return df
+
+
+def aggressive_remove_source_authors(df, grouped_citing_authors):
+    """Remove authors from citing author list if they authored a paper in source PMIDs and remove any authors who have
+                co-authored with any of the source authors
+
+        :param df: Dataframe holding citing PMIDs and authors per source PMID
+        :param grouped_source_authors: A list with sublists of source authors grouped per PMID
+
+        :return: Dataframe
+    """
+
+    # Get source PMIDs from Dataframe
+    source_PMIDs = list(chain.from_iterable(df['PMID']))
+
+    # Get all authors from source PMIDs
+    author_list_per_PMID, _ = get_PMIDs_metadata(source_PMIDs)
+    source_authors = set(chain.from_iterable(author_list_per_PMID))
+
+    source_authors_coauthors = set(find_coauthors(source_authors, grouped_citing_authors))
+
+    # Find intersection of source authors and citing authors
+    citing_authors = set(df.index)
+
+    citing_source_authors_coauthors = source_authors_coauthors.intersection(citing_authors)
+
+    # Drop source authors from Dataframe
+    df.drop(pd.Index(citing_source_authors_coauthors), inplace=True)
+
+
+    return df
+
 
 def get_cited_by_PMIDs(input_PMID_list):
     """Request "cited by" table for list of PMIDs from PubMed API
@@ -266,7 +316,20 @@ def find_cited_article(search_string, df):
                 matched_PMIDs.append(df.iloc[i]["PMID"])
     return matched_PMIDs
 
+def find_coauthors(author_list, grouped_author_list):
+    coauthor_list = []
+    for author in author_list:
+        for group in grouped_author_list:
+            if not group:  # Skip any groups with no authors
+                continue
+            elif author in group[0]:
+                coauthor_list.append(group)
 
+    # Flatten list
+    coauthor_list = list(chain.from_iterable(coauthor_list))
+    coauthor_list = list(chain.from_iterable(coauthor_list)) # Bit hacky...
+
+    return coauthor_list
 
 # Group elements of list into of sublists
 def group_list_elements(input_list, group_sizes):
