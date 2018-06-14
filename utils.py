@@ -317,8 +317,18 @@ def find_cited_article(search_string, df):
     return matched_PMIDs
 
 def find_coauthors(author_list, grouped_author_list):
+    """
+    Finds all the co_authors for a given list of authors based on a list of authors per PMID
+    :param author_list: list of authors
+    :param grouped_author_list: a list of groups of authors, per citing PMID per source PMID
+    :return: list of co-authors of the authors in author_list (includes the names in author_list)
+    """
     coauthor_list = []
+
+    # For each author, find if they are in the grouped_author_list, if they are, add entire group
     for author in author_list:
+        # grouped_author_list is grouped by source PMIDs, citing PMIDs that cite the source PMIDs and authors of
+        # citing PMIDs
         for source_PMID in grouped_author_list:
             if not source_PMID:  # Skip any  source PMIDs with not citations
                 continue
