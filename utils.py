@@ -319,15 +319,16 @@ def find_cited_article(search_string, df):
 def find_coauthors(author_list, grouped_author_list):
     coauthor_list = []
     for author in author_list:
-        for group in grouped_author_list:
-            if not group:  # Skip any groups with no authors
+        for source_PMID in grouped_author_list:
+            if not source_PMID:  # Skip any  source PMIDs with not citations
                 continue
-            elif author in group[0]:
-                coauthor_list.append(group)
+            for citing_PMID in source_PMID:
+                if author in citing_PMID:
+                    coauthor_list.append(citing_PMID)
 
-    # Flatten list
-    coauthor_list = list(chain.from_iterable(coauthor_list))
-    coauthor_list = list(chain.from_iterable(coauthor_list)) # Bit hacky...
+
+    # Flatten list and remove duplicates
+    coauthor_list = list(set(chain.from_iterable(coauthor_list)))
 
     return coauthor_list
 
