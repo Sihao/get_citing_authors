@@ -75,9 +75,9 @@ def get_author_list_counts(source_PMIDs, option = 'all'):
 
     # Remove source authors if option is selected
     if option == 'exclude_source':
-        remove_source_authors(grouped)
+        remove_source_authors(grouped, source_PMIDs)
     elif option == 'aggressive_exclude_source':
-        aggressive_remove_source_authors(grouped, citing_author_list_per_PMID_grouped)
+        aggressive_remove_source_authors(grouped, citing_author_list_per_PMID_grouped, source_PMIDs)
 
     # Separate cited and citing PMIDs into separate lists
     cited_PMIDs = grouped['PMID']
@@ -106,16 +106,14 @@ def create_dataframe(source_PMIDs, cited_by_list, citing_author_list_per_PMID_gr
 
     return df
 
-def remove_source_authors(df):
+def remove_source_authors(df, source_PMIDs):
     """Remove authors from citing author list if they authored a paper in source PMIDs
 
         :param df: Dataframe holding citing PMIDs and authors per source PMID
+        :param source_PMIDs: List of source PMIDs
 
         :return: Dataframe
     """
-
-    # Get source PMIDs from Dataframe
-    source_PMIDs = list(set(chain.from_iterable(df['PMID'])))
 
     # Get all authors from source PMIDs
     author_list_per_PMID, _ = get_PMIDs_metadata(source_PMIDs)
@@ -133,18 +131,17 @@ def remove_source_authors(df):
     return df
 
 
-def aggressive_remove_source_authors(df, grouped_citing_authors):
+def aggressive_remove_source_authors(df, grouped_citing_authors, source_PMIDs):
     """Remove authors from citing author list if they authored a paper in source PMIDs and remove any authors who have
                 co-authored with any of the source authors
 
         :param df: Dataframe holding citing PMIDs and authors per source PMID
         :param grouped_source_authors: A list with sublists of source authors grouped per PMID
+        :param source_PMIDs: List of source PMIDs
 
         :return: Dataframe
     """
 
-    # Get source PMIDs from Dataframe
-    source_PMIDs = list(chain.from_iterable(df['PMID']))
 
     # Get all authors from source PMIDs
     author_list_per_PMID, _ = get_PMIDs_metadata(source_PMIDs)
