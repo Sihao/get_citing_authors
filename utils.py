@@ -115,7 +115,7 @@ def remove_source_authors(df):
     """
 
     # Get source PMIDs from Dataframe
-    source_PMIDs = list(chain.from_iterable(df['PMID']))
+    source_PMIDs = list(set(chain.from_iterable(df['PMID'])))
 
     # Get all authors from source PMIDs
     author_list_per_PMID, _ = get_PMIDs_metadata(source_PMIDs)
