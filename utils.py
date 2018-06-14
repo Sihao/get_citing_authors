@@ -79,7 +79,7 @@ def get_author_list_counts(source_PMIDs, option = 'all'):
     elif option == 'aggressive_exclude_source':
         aggressive_remove_source_authors(grouped, citing_author_list_per_PMID_grouped)
 
-    # Seperate cited and citing PMIDs into seperate lists
+    # Separate cited and citing PMIDs into separate lists
     cited_PMIDs = grouped['PMID']
     citing_PMIDs = grouped['citing_PMID']
 
