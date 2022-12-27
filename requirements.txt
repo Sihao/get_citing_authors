@@ -8,7 +8,7 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.1.1
 numpy==1.14.2
-pandas==0.22.0
+pandas==0.24.0
 python-dateutil==2.7.0
 pytz==2018.3
 requests==2.18.4
