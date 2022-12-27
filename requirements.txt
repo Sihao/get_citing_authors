@@ -6,8 +6,7 @@ gunicorn==19.7.1
 idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
-zope.interface>5.0.0
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 numpy==1.14.2
 pandas==0.22.0
 python-dateutil==2.7.0
